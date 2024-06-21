@@ -1,5 +1,6 @@
 package com.example.WorkShop.api.dto.request;
 
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.AllArgsConstructor;
@@ -12,7 +13,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class ReservationRequest {
-    @NotNull(message = "Status cannot be null")
+    @NotBlank(message = "Status cannot be null")
     private String status;
 
     @NotNull(message = "user_id cannot be null")

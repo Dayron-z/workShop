@@ -29,7 +29,6 @@ public class BookRequest {
     @NotBlank(message = "Genre is required")
     private String genre;
 
-
     @NotBlank(message = "ISBN is required")
 /*    Define un patrón regex (\\d{13}) para asegurar que isbn tenga exactamente 13 dígitos numéricos.*/
     @Pattern(regexp = "\\d{13}", message = "ISBN must be a 13-digit number")

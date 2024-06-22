@@ -14,7 +14,6 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
 public class BookRequest {
     @NotBlank(message = "Title is required")
     private String title;

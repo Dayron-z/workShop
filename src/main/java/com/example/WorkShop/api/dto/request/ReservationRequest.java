@@ -11,7 +11,6 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
 public class ReservationRequest {
     @NotBlank(message = "Status cannot be null")
     private String status;

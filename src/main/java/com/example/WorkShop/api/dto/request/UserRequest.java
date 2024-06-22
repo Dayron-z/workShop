@@ -14,7 +14,6 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
 public class UserRequest {
     @NotBlank(message = "Username cannot be blank")
     private String username;
@@ -31,4 +30,5 @@ public class UserRequest {
 
     @NotNull(message = "Type cannot be null")
     private Type type;
+
 }

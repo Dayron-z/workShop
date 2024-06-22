@@ -16,7 +16,6 @@ import java.time.LocalDate;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
 public class LoanRequest {
     @FutureOrPresent(message = "return_date must be in the present or future")
     private LocalDate return_date;

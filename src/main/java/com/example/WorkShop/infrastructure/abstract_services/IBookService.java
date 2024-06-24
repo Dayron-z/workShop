@@ -4,4 +4,5 @@ import com.example.WorkShop.api.dto.request.BookRequest;
 import com.example.WorkShop.api.dto.response.used_responses.BookResponse;
 
 public interface IBookService extends CrudService<BookRequest, BookResponse, Long>{
+    public String FIELD_BY_SORT = "title";
 }

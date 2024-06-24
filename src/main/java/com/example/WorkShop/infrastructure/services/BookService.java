@@ -7,13 +7,15 @@ import com.example.WorkShop.api.dto.response.used_responses.BookResponse;
 import com.example.WorkShop.api.dto.response.used_responses.UserResponse;
 import com.example.WorkShop.domain.entities.Book;
 import com.example.WorkShop.domain.entities.UserEntity;
+import com.example.WorkShop.domain.repositories.BookRepository;
 import com.example.WorkShop.domain.repositories.UserRepository;
+import com.example.WorkShop.infrastructure.abstract_services.IBookService;
 import com.example.WorkShop.infrastructure.abstract_services.IUserService;
+import com.example.WorkShop.mappers.BookMapper;
 import com.example.WorkShop.mappers.UserMapper;
 import com.example.WorkShop.util.enums.SortType;
 import com.example.WorkShop.util.enums.exceptions.BadRequestException;
 import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -22,43 +24,43 @@ import org.springframework.stereotype.Service;
 
 @Service
 @AllArgsConstructor
-public class UserService implements IUserService {
+public class BookService implements IBookService {
     /*Repositorio*/
     @Autowired
-    private final UserRepository userRepository;
+    private final BookRepository bookRepository;
     /*Mapper*/
     @Autowired
-    private final UserMapper userMapper;
+    private final BookMapper bookMapper;
 
 
     @Override
-    public UserResponse create(UserRequest request) {
+    public BookResponse create(BookRequest request) {
         /*Verificadp*/
-        UserEntity userEntity = this.userMapper.requestToEntity(request);
-        return this.userMapper.entityToResponse(this.userRepository.save(userEntity));
+        Book book = this.bookMapper.requestToEntity(request);
+        return this.bookMapper.entityToResponse(this.bookRepository.save(book));
     }
 
     @Override
-    public UserResponse get(Long id) {
-        UserEntity user = this.findById(id);
-        return this.userMapper.entityToResponse(user);
+    public BookResponse get(Long id) {
+        Book book = this.findById(id);
+        return this.bookMapper.entityToResponse(book);
     }
     @Override
-    public UserResponse update(UserRequest request, Long id) {
-        UserEntity user = this.findById(id);
-        UserEntity userEntity = this.userMapper.requestToEntity(request);
-        userEntity.setId(user.getId());
-        userEntity.setLoans(user.getLoans());
-        userEntity.setRerservations(user.getRerservations());
-        return this.userMapper.entityToResponse(this.userRepository.save(userEntity));
+    public BookResponse update(BookRequest request, Long id) {
+        Book book = this.findById(id);
+        Book updatedBook = this.bookMapper.requestToEntity(request);
+        updatedBook.setId(book.getId());
+        updatedBook.setLoans(book.getLoans());
+        updatedBook.setRerservations(book.getRerservations());
+        return this.bookMapper.entityToResponse(this.bookRepository.save(updatedBook));
     }
     @Override
     public void delete(Long id) {
-        UserEntity user = this.findById(id);
-        this.userRepository.delete(user);
+        Book book = this.findById(id);
+        this.bookRepository.delete(book);
     }
     @Override
-    public Page<UserResponse> getAll(int page, int size, SortType sort) {
+    public Page<BookResponse> getAll(int page, int size, SortType sort) {
         if (page < 0){
             page = 0;
         };
@@ -71,9 +73,9 @@ public class UserService implements IUserService {
             case DESC -> pageRequest = PageRequest.of(page, size, Sort.by(FIELD_BY_SORT).descending());
         }
 
-        return this.userRepository.findAll(pageRequest).map(this.userMapper::entityToResponse);
+        return this.bookRepository.findAll(pageRequest).map(this.bookMapper::entityToResponse);
     }
-    private UserEntity findById(Long id){
-        return this.userRepository.findById(id).orElseThrow(() -> new BadRequestException("User could not be found"));
+    private Book findById(Long id){
+        return this.bookRepository.findById(id).orElseThrow(() -> new BadRequestException("Book could not be found"));
     }
 }

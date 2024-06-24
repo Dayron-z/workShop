@@ -12,7 +12,6 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
 public class LoanResponseToBookResponse {
     private Long id;
     private LocalDateTime loan_date;

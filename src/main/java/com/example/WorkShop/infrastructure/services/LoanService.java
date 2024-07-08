@@ -1,0 +1,84 @@
+package com.example.WorkShop.infrastructure.services;
+
+import com.example.WorkShop.api.dto.request.LoanRequest;
+import com.example.WorkShop.api.dto.response.used_responses.LoanResponse;
+import com.example.WorkShop.domain.entities.Book;
+import com.example.WorkShop.domain.entities.Loan;
+import com.example.WorkShop.domain.entities.UserEntity;
+import com.example.WorkShop.domain.repositories.BookRepository;
+import com.example.WorkShop.domain.repositories.LoanRepository;
+import com.example.WorkShop.infrastructure.abstract_services.ILoanService;
+import com.example.WorkShop.mappers.LoanMapper;
+import com.example.WorkShop.util.enums.SortType;
+import com.example.WorkShop.util.enums.exceptions.BadRequestException;
+import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+
+@Service
+@AllArgsConstructor
+public class LoanService  implements ILoanService {
+
+    @Autowired
+    private final LoanMapper loanMapper;
+
+    @Autowired
+    private final LoanRepository loanRepository;
+
+
+
+
+    @Override
+    public LoanResponse create(LoanRequest request) {
+        Loan loan = this.loanMapper.requestToEntity(request);
+        loan.setLoan_date(LocalDateTime.now());
+        return  this.loanMapper.entityToResponse(this.loanRepository.save(loan));
+    }
+
+    @Override
+    public LoanResponse get(Long id) {
+        return this.loanMapper.entityToResponse(this.findById(id));
+    }
+
+    @Override
+    public LoanResponse update(LoanRequest request, Long id) {
+        Loan loan = this.findById(id);
+        Loan updatedLoan = this.loanMapper.requestToEntity(request);
+        updatedLoan.setId(loan.getId());
+        updatedLoan.setLoan_date(loan.getLoan_date());
+        return this.loanMapper.entityToResponse(this.loanRepository.save(updatedLoan));
+    }
+
+    @Override
+    public void delete(Long id) {
+        Loan loan = this.findById(id);
+        this.loanRepository.delete(loan);
+    }
+
+    @Override
+    public Page<LoanResponse> getAll(int page, int size, SortType sort) {
+        if (page < 0){
+            page = 0;
+        };
+
+        PageRequest pageRequest =  null;
+
+        switch (sort){
+            case NONE -> pageRequest = PageRequest.of(page, size);
+            case ASC -> pageRequest = PageRequest.of(page, size, Sort.by(FIELD_BY_SORT).ascending());
+            case DESC -> pageRequest = PageRequest.of(page, size, Sort.by(FIELD_BY_SORT).descending());
+        }
+
+        return this.loanRepository.findAll(pageRequest).map(this.loanMapper::entityToResponse);
+    }
+
+
+    private Loan findById(Long id){
+        return this.loanRepository.findById(id).orElseThrow(() -> new BadRequestException("Loan could not be found"));
+    }
+}

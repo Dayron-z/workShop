@@ -28,8 +28,6 @@ public interface UserMapper {
     /*¿Que es lo qué deseo hacer?
      * Deseo  hacer un mapper que convierta mi entidad en response
      * */
-
-
     UserResponse entityToResponse(UserEntity userEntity);
     UserEntity requestToEntity(UserRequest userRequest);
 }

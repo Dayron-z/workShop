@@ -6,4 +6,5 @@ import com.example.WorkShop.api.dto.response.used_responses.BookResponse;
 import com.example.WorkShop.api.dto.response.used_responses.LoanResponse;
 
 public interface ILoanService extends CrudService<LoanRequest, LoanResponse, Long>{
+    public String FIELD_BY_SORT = "id";
 }

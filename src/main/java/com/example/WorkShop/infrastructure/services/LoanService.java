@@ -7,6 +7,7 @@ import com.example.WorkShop.domain.entities.Loan;
 import com.example.WorkShop.domain.entities.UserEntity;
 import com.example.WorkShop.domain.repositories.BookRepository;
 import com.example.WorkShop.domain.repositories.LoanRepository;
+import com.example.WorkShop.domain.repositories.UserRepository;
 import com.example.WorkShop.infrastructure.abstract_services.ILoanService;
 import com.example.WorkShop.mappers.LoanMapper;
 import com.example.WorkShop.util.enums.SortType;
@@ -30,13 +31,24 @@ public class LoanService  implements ILoanService {
     @Autowired
     private final LoanRepository loanRepository;
 
+    @Autowired
+    private final UserRepository userRepository;
+    @Autowired
+    private final BookRepository bookRepository;
+
 
 
 
     @Override
     public LoanResponse create(LoanRequest request) {
+        Book book = this.bookRepository.findById(request.getBook_id()).orElseThrow(()-> new BadRequestException("Book could not be found"));
+        UserEntity user = this.userRepository.findById(request.getBook_id()).orElseThrow(()-> new BadRequestException("User could not be found"));
+
+
         Loan loan = this.loanMapper.requestToEntity(request);
         loan.setLoan_date(LocalDateTime.now());
+        loan.setBook(book);
+        loan.setUser(user);
         return  this.loanMapper.entityToResponse(this.loanRepository.save(loan));
     }
 
@@ -51,6 +63,8 @@ public class LoanService  implements ILoanService {
         Loan updatedLoan = this.loanMapper.requestToEntity(request);
         updatedLoan.setId(loan.getId());
         updatedLoan.setLoan_date(loan.getLoan_date());
+        updatedLoan.setBook(loan.getBook());
+        updatedLoan.setUser(loan.getUser());
         return this.loanMapper.entityToResponse(this.loanRepository.save(updatedLoan));
     }
 

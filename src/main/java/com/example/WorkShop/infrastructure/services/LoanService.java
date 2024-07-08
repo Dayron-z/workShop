@@ -4,6 +4,7 @@ import com.example.WorkShop.api.dto.request.LoanRequest;
 import com.example.WorkShop.api.dto.response.used_responses.LoanResponse;
 import com.example.WorkShop.domain.entities.Book;
 import com.example.WorkShop.domain.entities.Loan;
+import com.example.WorkShop.domain.entities.Reservation;
 import com.example.WorkShop.domain.entities.UserEntity;
 import com.example.WorkShop.domain.repositories.BookRepository;
 import com.example.WorkShop.domain.repositories.LoanRepository;
@@ -20,6 +21,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -27,15 +30,12 @@ public class LoanService  implements ILoanService {
 
     @Autowired
     private final LoanMapper loanMapper;
-
     @Autowired
     private final LoanRepository loanRepository;
-
     @Autowired
     private final UserRepository userRepository;
     @Autowired
     private final BookRepository bookRepository;
-
 
 
 
@@ -94,5 +94,13 @@ public class LoanService  implements ILoanService {
 
     private Loan findById(Long id){
         return this.loanRepository.findById(id).orElseThrow(() -> new BadRequestException("Loan could not be found"));
+    }
+
+    @Override
+    public List<LoanResponse> findByUserId(Long id) {
+        List<Loan> loans = loanRepository.findByUserId(id);
+        return loans.stream()
+                .map(reservation -> loanMapper.entityToResponse(reservation))
+                .collect(Collectors.toList());
     }
 }

@@ -42,7 +42,7 @@ public class ReservationService implements IReservartionService {
     @Override
     public ReservationResponse create(ReservationRequest request) {
         Book book = this.bookRepository.findById(request.getBook_id()).orElseThrow(()-> new BadRequestException("Book could not be found"));
-        UserEntity user = this.userRepository.findById(request.getBook_id()).orElseThrow(()-> new BadRequestException("User could not be found"));
+        UserEntity user = this.userRepository.findById(request.getUser_id()).orElseThrow(()-> new BadRequestException("User could not be found"));
 
 
         Reservation reservation = this.reservationMapper.requestToEntity(request);
@@ -106,7 +106,7 @@ public class ReservationService implements IReservartionService {
 
     @Override
     public List<ReservationResponse> findByBookId(Long id) {
-        List<Reservation> reservations = reservartionRepository.findByUserId(id);
+        List<Reservation> reservations = reservartionRepository.findByBookId(id);
         return reservations.stream().map(reservation -> this.reservationMapper.entityToResponse(reservation)).collect(Collectors.toList());
     }
 }

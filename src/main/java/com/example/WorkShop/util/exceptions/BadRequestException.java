@@ -1,8 +1,7 @@
-package com.example.WorkShop.util.enums.exceptions;
+package com.example.WorkShop.util.exceptions;
 
 
 public class BadRequestException extends RuntimeException {
-
     public BadRequestException(String message) {
         super(message);
     }

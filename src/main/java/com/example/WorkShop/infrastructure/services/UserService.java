@@ -1,19 +1,16 @@
 package com.example.WorkShop.infrastructure.services;
 
 
-import com.example.WorkShop.api.dto.request.BookRequest;
 import com.example.WorkShop.api.dto.request.UserRequest;
-import com.example.WorkShop.api.dto.response.used_responses.BookResponse;
 import com.example.WorkShop.api.dto.response.used_responses.UserResponse;
-import com.example.WorkShop.domain.entities.Book;
 import com.example.WorkShop.domain.entities.UserEntity;
 import com.example.WorkShop.domain.repositories.UserRepository;
 import com.example.WorkShop.infrastructure.abstract_services.IUserService;
 import com.example.WorkShop.mappers.UserMapper;
 import com.example.WorkShop.util.enums.SortType;
-import com.example.WorkShop.util.enums.exceptions.BadRequestException;
+import com.example.WorkShop.util.exceptions.BadRequestException;
+import com.example.WorkShop.util.exceptions.ValidationException;
 import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -29,15 +26,14 @@ public class UserService implements IUserService {
     /*Mapper*/
     @Autowired
     private final UserMapper userMapper;
-
-
     @Override
     public UserResponse create(UserRequest request) {
-        /*Verificadp*/
+        /*Método de validaciones*/
+        validateUser(request);
+
         UserEntity userEntity = this.userMapper.requestToEntity(request);
         return this.userMapper.entityToResponse(this.userRepository.save(userEntity));
     }
-
     @Override
     public UserResponse get(Long id) {
         UserEntity user = this.findById(id);
@@ -45,6 +41,9 @@ public class UserService implements IUserService {
     }
     @Override
     public UserResponse update(UserRequest request, Long id) {
+        /*Método de validaciones*/
+        validateUser(request);
+
         UserEntity user = this.findById(id);
         UserEntity userEntity = this.userMapper.requestToEntity(request);
         userEntity.setId(user.getId());
@@ -73,7 +72,19 @@ public class UserService implements IUserService {
 
         return this.userRepository.findAll(pageRequest).map(this.userMapper::entityToResponse);
     }
+
     private UserEntity findById(Long id){
         return this.userRepository.findById(id).orElseThrow(() -> new BadRequestException("User could not be found"));
     }
+
+    private void validateUser(UserRequest userRequest){
+        if (userRepository.existsByUsername(userRequest.getUsername())){
+            throw new ValidationException("Username already exists");
+        }
+        if (userRepository.existsByEmail(userRequest.getEmail())){
+            throw new ValidationException("Email already exists");
+        }
+    }
+
+
 }

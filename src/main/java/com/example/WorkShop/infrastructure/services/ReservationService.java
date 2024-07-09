@@ -11,7 +11,7 @@ import com.example.WorkShop.domain.repositories.UserRepository;
 import com.example.WorkShop.infrastructure.abstract_services.IReservartionService;
 import com.example.WorkShop.mappers.ReservationMapper;
 import com.example.WorkShop.util.enums.SortType;
-import com.example.WorkShop.util.enums.exceptions.BadRequestException;
+import com.example.WorkShop.util.exceptions.BadRequestException;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -35,8 +35,6 @@ public class ReservationService implements IReservartionService {
     private final UserRepository userRepository;
     @Autowired
     private final BookRepository bookRepository;
-
-
 
 
     @Override
@@ -79,7 +77,6 @@ public class ReservationService implements IReservartionService {
         if (page < 0){
             page = 0;
         };
-
         PageRequest pageRequest =  null;
 
         switch (sort){

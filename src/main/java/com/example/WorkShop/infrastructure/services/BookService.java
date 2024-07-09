@@ -4,17 +4,13 @@ package com.example.WorkShop.infrastructure.services;
 import com.example.WorkShop.api.dto.request.BookRequest;
 import com.example.WorkShop.api.dto.request.UserRequest;
 import com.example.WorkShop.api.dto.response.used_responses.BookResponse;
-import com.example.WorkShop.api.dto.response.used_responses.UserResponse;
 import com.example.WorkShop.domain.entities.Book;
-import com.example.WorkShop.domain.entities.UserEntity;
 import com.example.WorkShop.domain.repositories.BookRepository;
-import com.example.WorkShop.domain.repositories.UserRepository;
 import com.example.WorkShop.infrastructure.abstract_services.IBookService;
-import com.example.WorkShop.infrastructure.abstract_services.IUserService;
 import com.example.WorkShop.mappers.BookMapper;
-import com.example.WorkShop.mappers.UserMapper;
 import com.example.WorkShop.util.enums.SortType;
-import com.example.WorkShop.util.enums.exceptions.BadRequestException;
+import com.example.WorkShop.util.exceptions.BadRequestException;
+import com.example.WorkShop.util.exceptions.ValidationException;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -42,11 +38,13 @@ public class BookService implements IBookService {
 
     @Override
     public BookResponse get(Long id) {
+        validateNegativeNumber(id);
         Book book = this.findById(id);
         return this.bookMapper.entityToResponse(book);
     }
     @Override
     public BookResponse update(BookRequest request, Long id) {
+        validateNegativeNumber(id);
         Book book = this.findById(id);
         Book updatedBook = this.bookMapper.requestToEntity(request);
         updatedBook.setId(book.getId());
@@ -56,6 +54,7 @@ public class BookService implements IBookService {
     }
     @Override
     public void delete(Long id) {
+        validateNegativeNumber(id);
         Book book = this.findById(id);
         this.bookRepository.delete(book);
     }
@@ -76,6 +75,14 @@ public class BookService implements IBookService {
         return this.bookRepository.findAll(pageRequest).map(this.bookMapper::entityToResponse);
     }
     private Book findById(Long id){
+        validateNegativeNumber(id);
         return this.bookRepository.findById(id).orElseThrow(() -> new BadRequestException("Book could not be found"));
+    }
+
+
+    private void validateNegativeNumber(Long id){
+        if (id <= 0){
+            throw new BadRequestException("The id cannot be a negative number.");
+        }
     }
 }
